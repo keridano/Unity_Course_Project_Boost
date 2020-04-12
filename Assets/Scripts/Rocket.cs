@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
+    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] float mainThrust = 800f;
+
     Rigidbody rigidBody;
     AudioSource rocketThrust;
 
@@ -18,14 +18,18 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        Thrust();
+        Rotate();
     }
 
-    private void ProcessInput()
+    private void Thrust()
     {
+        var thrustThisFrame = mainThrust * Time.deltaTime;
+        var upThrustThisFrame = Vector3.up * thrustThisFrame;
+
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(upThrustThisFrame);
             if (!rocketThrust.isPlaying)
                 rocketThrust.Play();
         }
@@ -34,15 +38,25 @@ public class Rocket : MonoBehaviour
             if (rocketThrust.isPlaying)
                 rocketThrust.Stop();
         }
+    }
 
+    private void Rotate()
+    {
+        rigidBody.freezeRotation = true; //Manually manage rotation
+
+        var rotateThisFrame = rcsThrust * Time.deltaTime;
+        var fwdRotateThisFrame = Vector3.forward * rotateThisFrame;
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Rotate(-Vector3.forward);
+            transform.Rotate(-fwdRotateThisFrame);
         }
         else if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(fwdRotateThisFrame);
         }
+
+        rigidBody.freezeRotation = false; //Physical rotation restored
+
     }
 }
