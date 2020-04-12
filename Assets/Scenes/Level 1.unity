@@ -128,10 +128,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2033915505, guid: 3a450e2f68b9a402d80b8f5063ed445e, type: 3}
-      propertyPath: mainThrust
-      value: 800
-      objectReference: {fileID: 0}
     - target: {fileID: 5647052766671711321, guid: 3a450e2f68b9a402d80b8f5063ed445e,
         type: 3}
       propertyPath: m_Name
