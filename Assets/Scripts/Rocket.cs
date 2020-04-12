@@ -7,12 +7,17 @@ public class Rocket : MonoBehaviour
 
     Rigidbody rigidBody;
     AudioSource rocketThrust;
+    Vector3 originalPos;
+    Quaternion originalRotation;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
         rocketThrust = GetComponent<AudioSource>();
+
+        originalPos = gameObject.transform.position;
+        originalRotation = gameObject.transform.rotation;
     }
 
     // Update is called once per frame
@@ -30,7 +35,8 @@ public class Rocket : MonoBehaviour
                 print("OK");
                 break;
             default:
-                print("Dead");
+                gameObject.transform.position = originalPos;
+                gameObject.transform.rotation = originalRotation;
                 break;
         }
     }
