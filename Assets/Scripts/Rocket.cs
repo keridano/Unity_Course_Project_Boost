@@ -35,11 +35,15 @@ public class Rocket : MonoBehaviour
         {
             Thrust();
             Rotate();
-        }
+        } else
+            rocketThrust.Stop();
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (playerState != State.Alive)
+            return;
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
