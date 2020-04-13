@@ -6,26 +6,25 @@ public class Rocket : MonoBehaviour
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
-    enum State { Alive, Dying, Transcending}
+    [SerializeField] AudioClip rocketThrust;
+    [SerializeField] AudioClip collisionSound;
+    [SerializeField] AudioClip victorySound;
 
-    AudioSource rocketThrust;
-    AudioSource collisionSound;
-    AudioSource victorySound;
+    [SerializeField] ParticleSystem rocketThrustParticles;
+    [SerializeField] ParticleSystem collisionParticles;
+    [SerializeField] ParticleSystem victoryParticles;
 
+
+    AudioSource audioSource;
     Rigidbody rigidBody;
-
     State playerState;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
         playerState = State.Alive;
-
-        var audioSources = GetComponents<AudioSource>();
-        rocketThrust = audioSources[0];
-        collisionSound = audioSources[1];
-        victorySound = audioSources[2];
     }
 
     // Update is called once per frame
@@ -33,16 +32,14 @@ public class Rocket : MonoBehaviour
     {
         if(playerState == State.Alive)
         {
-            Thrust();
-            Rotate();
-        } else
-            rocketThrust.Stop();
+            RespondToThrustInput();
+            RespondToRotateInput();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (playerState != State.Alive)
-            return;
+        if (playerState != State.Alive) return;
 
         switch (collision.gameObject.tag)
         {
@@ -51,39 +48,37 @@ public class Rocket : MonoBehaviour
                 break;
 
             case "Finish":
-                playerState = State.Transcending;
-
-                if (!victorySound.isPlaying)
-                    victorySound.Play();
-
-                Invoke("HitFinish", 3f);
+                StartSuccessSequence();
                 break;
 
             default:
-                playerState = State.Dying;
-                if (!collisionSound.isPlaying)
-                    collisionSound.Play();
-                Invoke("HitDeadlyObject", 1f);
+                StartDeathSequence();
                 break;
         }
     }
 
-    private void Thrust()
+
+    private void RespondToThrustInput()
     {
         if (Input.GetKey(KeyCode.Space))
-        {
-            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
-            if (!rocketThrust.isPlaying)
-                rocketThrust.Play();
-        }
+            ApplyThrust();
         else
         {
-            if (rocketThrust.isPlaying)
-                rocketThrust.Stop();
+            if (audioSource.isPlaying)
+                audioSource.Stop();
+            rocketThrustParticles.Stop();
         }
     }
 
-    private void Rotate()
+    private void ApplyThrust()
+    {
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+        if (!audioSource.isPlaying)
+            StopSoundAndPlayOneShot(rocketThrust);
+        rocketThrustParticles.Play();
+    }
+
+    private void RespondToRotateInput()
     {
         rigidBody.freezeRotation = true; //Manually manage rotation
 
@@ -91,16 +86,45 @@ public class Rocket : MonoBehaviour
         var fwdRotateThisFrame = Vector3.forward * rotateThisFrame;
 
         if (Input.GetKey(KeyCode.D))
-        {
             transform.Rotate(-fwdRotateThisFrame);
-        }
         else if (Input.GetKey(KeyCode.A))
-        {
             transform.Rotate(fwdRotateThisFrame);
-        }
 
         rigidBody.freezeRotation = false; //Physical rotation restored
+    }
 
+    private void StartSuccessSequence()
+    {
+        playerState = State.Transcending;
+        StopSoundAndPlayOneShot(victorySound);
+        StartVictoryParticles();
+        Invoke("HitFinish", 3f);
+    }
+
+    private void StartVictoryParticles()
+    {
+        rocketThrustParticles.Stop();
+        victoryParticles.Play();
+    }
+
+    private void StartDeathSequence()
+    {
+        playerState = State.Dying;
+        StopSoundAndPlayOneShot(collisionSound);
+        StartCollisionParticles();
+        Invoke("HitDeadlyObject", 1f);
+    }
+
+    private void StartCollisionParticles()
+    {
+        rocketThrustParticles.Stop();
+        collisionParticles.Play();
+    }
+
+    private void StopSoundAndPlayOneShot(AudioClip audioClip)
+    {
+        audioSource.Stop();
+        audioSource.PlayOneShot(audioClip);
     }
 
 #pragma warning disable IDE0051
@@ -119,4 +143,11 @@ public class Rocket : MonoBehaviour
     }
 
 #pragma warning restore IDE0051 
+}
+
+public enum State
+{
+    Alive,
+    Dying,
+    Transcending
 }
