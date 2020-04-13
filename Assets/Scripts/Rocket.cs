@@ -43,11 +43,13 @@ public class Rocket : MonoBehaviour
                 break;
 
             case "Finish":
-                victorySound.Play();
+                if(!victorySound.isPlaying)
+                    victorySound.Play();
                 break;
 
             default:
-                collisionSound.Play();
+                if (!collisionSound.isPlaying)
+                    collisionSound.Play();
                 gameObject.transform.position = originalPos;
                 gameObject.transform.rotation = originalRotation;
                 break;
