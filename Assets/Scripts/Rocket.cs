@@ -5,19 +5,26 @@ public class Rocket : MonoBehaviour
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
-    Rigidbody rigidBody;
     AudioSource rocketThrust;
+    AudioSource collisionSound;
+    AudioSource victorySound;
+
+    Rigidbody rigidBody;
     Vector3 originalPos;
     Quaternion originalRotation;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
-        rocketThrust = GetComponent<AudioSource>();
-
         originalPos = gameObject.transform.position;
         originalRotation = gameObject.transform.rotation;
+
+        rigidBody = GetComponent<Rigidbody>();
+
+        var audioSources = GetComponents<AudioSource>();
+        rocketThrust = audioSources[0];
+        collisionSound = audioSources[1];
+        victorySound = audioSources[2];
     }
 
     // Update is called once per frame
@@ -34,7 +41,13 @@ public class Rocket : MonoBehaviour
             case "Friendly":
                 print("OK");
                 break;
+
+            case "Finish":
+                victorySound.Play();
+                break;
+
             default:
+                collisionSound.Play();
                 gameObject.transform.position = originalPos;
                 gameObject.transform.rotation = originalRotation;
                 break;
