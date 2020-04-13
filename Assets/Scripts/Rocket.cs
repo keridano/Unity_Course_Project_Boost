@@ -1,25 +1,26 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
 
+    enum State { Alive, Dying, Transcending}
+
     AudioSource rocketThrust;
     AudioSource collisionSound;
     AudioSource victorySound;
 
     Rigidbody rigidBody;
-    Vector3 originalPos;
-    Quaternion originalRotation;
+
+    State playerState;
 
     // Start is called before the first frame update
     void Start()
     {
-        originalPos = gameObject.transform.position;
-        originalRotation = gameObject.transform.rotation;
-
         rigidBody = GetComponent<Rigidbody>();
+        playerState = State.Alive;
 
         var audioSources = GetComponents<AudioSource>();
         rocketThrust = audioSources[0];
@@ -30,8 +31,11 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Thrust();
-        Rotate();
+        if(playerState == State.Alive)
+        {
+            Thrust();
+            Rotate();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -43,15 +47,19 @@ public class Rocket : MonoBehaviour
                 break;
 
             case "Finish":
-                if(!victorySound.isPlaying)
+                playerState = State.Transcending;
+
+                if (!victorySound.isPlaying)
                     victorySound.Play();
+
+                Invoke("HitFinish", 3f);
                 break;
 
             default:
+                playerState = State.Dying;
                 if (!collisionSound.isPlaying)
                     collisionSound.Play();
-                gameObject.transform.position = originalPos;
-                gameObject.transform.rotation = originalRotation;
+                Invoke("HitDeadlyObject", 1f);
                 break;
         }
     }
@@ -90,4 +98,21 @@ public class Rocket : MonoBehaviour
         rigidBody.freezeRotation = false; //Physical rotation restored
 
     }
+
+#pragma warning disable IDE0051
+
+    private void HitDeadlyObject()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void HitFinish()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+            SceneManager.LoadScene(1);
+        else if (SceneManager.GetActiveScene().buildIndex == 1)
+            SceneManager.LoadScene(2);
+    }
+
+#pragma warning restore IDE0051 
 }
