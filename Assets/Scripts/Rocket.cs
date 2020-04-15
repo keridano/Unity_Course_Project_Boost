@@ -18,7 +18,9 @@ public class Rocket : MonoBehaviour
 
     AudioSource audioSource;
     Rigidbody rigidBody;
-    State playerState;
+
+    bool isTransitioning;
+
     private bool collisionsOff;
 
     // Start is called before the first frame update
@@ -26,7 +28,7 @@ public class Rocket : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        playerState = State.Alive;
+        isTransitioning = false;
     }
 
     // Update is called once per frame
@@ -34,7 +36,7 @@ public class Rocket : MonoBehaviour
     {
         DebugMode();
 
-        if (playerState == State.Alive)
+        if (!isTransitioning)
         {
             RespondToThrustInput();
             RespondToRotateInput();
@@ -44,9 +46,7 @@ public class Rocket : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collisionsOff) return;
-
-        if (playerState != State.Alive) return;
+        if (isTransitioning || collisionsOff) return;
 
         switch (collision.gameObject.tag)
         {
@@ -87,7 +87,7 @@ public class Rocket : MonoBehaviour
 
     private void RespondToRotateInput()
     {
-        rigidBody.freezeRotation = true; //Manually manage rotation
+        rigidBody.angularVelocity = Vector3.zero; //reset angular velocity due to physics
 
         var rotateThisFrame = rcsThrust * Time.deltaTime;
         var fwdRotateThisFrame = Vector3.forward * rotateThisFrame;
@@ -96,13 +96,11 @@ public class Rocket : MonoBehaviour
             transform.Rotate(-fwdRotateThisFrame);
         else if (Input.GetKey(KeyCode.A))
             transform.Rotate(fwdRotateThisFrame);
-
-        rigidBody.freezeRotation = false; //Physical rotation restored
     }
 
     private void StartSuccessSequence()
     {
-        playerState = State.Transcending;
+        isTransitioning = true;
         StopSoundAndPlayOneShot(victorySound);
         StartVictoryParticles();
         Invoke("HitFinish", levelLoadDelay);
@@ -116,7 +114,7 @@ public class Rocket : MonoBehaviour
 
     private void StartDeathSequence()
     {
-        playerState = State.Dying;
+        isTransitioning = true;
         StopSoundAndPlayOneShot(collisionSound);
         StartCollisionParticles();
         Invoke("HitDeadlyObject", 1f);
@@ -165,11 +163,4 @@ public class Rocket : MonoBehaviour
         }
     }
 
-}
-
-public enum State
-{
-    Alive,
-    Dying,
-    Transcending
 }
