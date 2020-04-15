@@ -19,6 +19,7 @@ public class Rocket : MonoBehaviour
     AudioSource audioSource;
     Rigidbody rigidBody;
     State playerState;
+    private bool collisionsOff;
 
     // Start is called before the first frame update
     void Start()
@@ -31,21 +32,26 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(playerState == State.Alive)
+        DebugMode();
+
+        if (playerState == State.Alive)
         {
             RespondToThrustInput();
             RespondToRotateInput();
         }
     }
 
+
     void OnCollisionEnter(Collision collision)
     {
+        if (collisionsOff) return;
+
         if (playerState != State.Alive) return;
 
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("OK");
+                //Do nothing
                 break;
 
             case "Finish":
@@ -137,21 +143,23 @@ public class Rocket : MonoBehaviour
 
     private void HitFinish()
     {
-        switch (SceneManager.GetActiveScene().buildIndex)
+        if(SceneManager.GetActiveScene().buildIndex < SceneManager.sceneCountInBuildSettings - 1)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+#pragma warning restore IDE0051
+
+    private void DebugMode()
+    {
+        if (Debug.isDebugBuild)
         {
-            case 0:
-                SceneManager.LoadScene(1);
-                break;
-            case 1:
-                SceneManager.LoadScene(2);
-                break;
-            case 2:
-                SceneManager.LoadScene(3);
-                break;
+            if (Input.GetKey(KeyCode.L))
+                HitFinish();
+            else if (Input.GetKey(KeyCode.C))
+                collisionsOff = !collisionsOff;
         }
     }
 
-#pragma warning restore IDE0051 
 }
 
 public enum State
