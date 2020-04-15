@@ -410,6 +410,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 963194229, guid: 794bb4854f8b142ecbe4845f850ac67b, type: 3}
+      propertyPath: m_Volume
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5219448932729584144, guid: 794bb4854f8b142ecbe4845f850ac67b,
         type: 3}
       propertyPath: m_Name
@@ -617,6 +621,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 62101819930528829, guid: a793963ed22e443a089303e47108403e,
+        type: 3}
+      propertyPath: movementVector.y
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 62101819930528829, guid: a793963ed22e443a089303e47108403e,
+        type: 3}
+      propertyPath: period
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7902517206318193219, guid: a793963ed22e443a089303e47108403e,
         type: 3}
       propertyPath: m_Name
@@ -676,6 +690,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8968307446040962073, guid: a793963ed22e443a089303e47108403e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 31.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a793963ed22e443a089303e47108403e, type: 3}

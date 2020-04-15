@@ -3,10 +3,10 @@
 [DisallowMultipleComponent]
 public class Oscillator : MonoBehaviour
 {
-    [SerializeField] Vector3 movementVector;
-    [SerializeField] float period = 2f;
+    [SerializeField] Vector3 movementVector = new Vector3(0,0,0);
+    [SerializeField] float period;
 
-    //[Range(0, 1)] [SerializeField] float movementFactor;
+    [Range(-1, 1)] [SerializeField] float movementFactor;
 
     Vector3 startingPos;
 
@@ -21,10 +21,15 @@ public class Oscillator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (period <= Mathf.Epsilon) return;
+
         var cycles = Time.time / period;
         var rawSinWave = Mathf.Sin(cycles * tau);
-          
-        var offset = movementVector * rawSinWave;
+
+        //movementFactor = (rawSinWave / 2f) + 0.5f; // (0,1)
+        movementFactor = rawSinWave; //(-1,1)
+        var offset = movementVector * movementFactor;
         transform.position = startingPos + offset;
+
     }
 }

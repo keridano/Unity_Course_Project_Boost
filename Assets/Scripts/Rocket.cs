@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 public class Rocket : MonoBehaviour
 {
     [SerializeField] float rcsThrust = 100f;
-    [SerializeField] float mainThrust = 100f;
+    [SerializeField] float mainThrust = 1000f;
+    [SerializeField] float levelLoadDelay = 3f;
 
     [SerializeField] AudioClip rocketThrust;
     [SerializeField] AudioClip collisionSound;
@@ -72,7 +73,7 @@ public class Rocket : MonoBehaviour
 
     private void ApplyThrust()
     {
-        rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
         if (!audioSource.isPlaying)
             StopSoundAndPlayOneShot(rocketThrust);
         rocketThrustParticles.Play();
@@ -98,7 +99,7 @@ public class Rocket : MonoBehaviour
         playerState = State.Transcending;
         StopSoundAndPlayOneShot(victorySound);
         StartVictoryParticles();
-        Invoke("HitFinish", 3f);
+        Invoke("HitFinish", levelLoadDelay);
     }
 
     private void StartVictoryParticles()
