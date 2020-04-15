@@ -143,8 +143,13 @@ public class Rocket : MonoBehaviour
 
     private void HitFinish()
     {
-        if(SceneManager.GetActiveScene().buildIndex < SceneManager.sceneCountInBuildSettings - 1)
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        int maxIndex = SceneManager.sceneCountInBuildSettings - 1;
+
+        if (currentIndex < maxIndex)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        else
+            SceneManager.LoadScene(0);
     }
 
 #pragma warning restore IDE0051
