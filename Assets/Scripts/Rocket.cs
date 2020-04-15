@@ -137,10 +137,18 @@ public class Rocket : MonoBehaviour
 
     private void HitFinish()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 0)
-            SceneManager.LoadScene(1);
-        else if (SceneManager.GetActiveScene().buildIndex == 1)
-            SceneManager.LoadScene(2);
+        switch (SceneManager.GetActiveScene().buildIndex)
+        {
+            case 0:
+                SceneManager.LoadScene(1);
+                break;
+            case 1:
+                SceneManager.LoadScene(2);
+                break;
+            case 2:
+                SceneManager.LoadScene(3);
+                break;
+        }
     }
 
 #pragma warning restore IDE0051 
