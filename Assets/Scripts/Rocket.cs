@@ -153,9 +153,9 @@ public class Rocket : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            if (Input.GetKey(KeyCode.L))
+            if (Input.GetKeyDown(KeyCode.L))
                 HitFinish();
-            else if (Input.GetKey(KeyCode.C))
+            else if (Input.GetKeyDown(KeyCode.C))
                 collisionsOff = !collisionsOff;
         }
     }
