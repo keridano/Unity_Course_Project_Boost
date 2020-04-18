@@ -1,0 +1,16 @@
+{
+"companyName": "DefaultCompany",
+"productName": "3_Project_Boost",
+"productVersion": "0.1",
+"dataUrl": "project_boost_webgl.data.unityweb",
+"wasmCodeUrl": "project_boost_webgl.wasm.code.unityweb",
+"wasmFrameworkUrl": "project_boost_webgl.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": false,
+"multithreading": false,
+"unityVersion": "2019.3.8f1"
+}
